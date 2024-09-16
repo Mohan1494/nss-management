@@ -1,5 +1,6 @@
 // src/components/EventsPage.jsx
 import React, { useState } from 'react';
+import { Container, TextField, Button, List, ListItem, Typography } from '@mui/material';
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -7,34 +8,43 @@ const EventsPage = () => {
   const [eventDate, setEventDate] = useState('');
 
   const addEvent = () => {
-    setEvents([...events, { eventName, eventDate }]);
-    setEventName('');
-    setEventDate('');
+    if (eventName && eventDate) {
+      setEvents([...events, { eventName, eventDate }]);
+      setEventName('');
+      setEventDate('');
+    }
   };
 
   return (
-    <div>
-      <h1>Events Page</h1>
-      <input 
-        type="text" 
-        placeholder="Event Name" 
-        value={eventName} 
-        onChange={(e) => setEventName(e.target.value)} 
+    <Container>
+      <Typography variant="h4" gutterBottom>Events Page</Typography>
+      <TextField
+        label="Event Name"
+        value={eventName}
+        onChange={(e) => setEventName(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input 
-        type="date" 
-        placeholder="Event Date" 
-        value={eventDate} 
-        onChange={(e) => setEventDate(e.target.value)} 
+      <TextField
+        label="Event Date"
+        type="date"
+        value={eventDate}
+        onChange={(e) => setEventDate(e.target.value)}
+        fullWidth
+        margin="normal"
+        InputLabelProps={{ shrink: true }}
       />
-      <button onClick={addEvent}>Add Event</button>
-      <ul>
+      <Button variant="contained" color="primary" onClick={addEvent} sx={{ mt: 2 }}>
+        Add Event
+      </Button>
+      <List sx={{ mt: 3 }}>
         {events.map((event, index) => (
-          <li key={index}>{`${event.eventName} - ${event.eventDate}`}</li>
+          <ListItem key={index}>{`${event.eventName}: ${event.eventDate}`}</ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 };
 
 export default EventsPage;
+  

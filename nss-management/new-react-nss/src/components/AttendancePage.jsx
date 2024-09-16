@@ -1,6 +1,7 @@
 // src/components/AttendancePage.jsx
 import React, { useState, useEffect } from 'react';
-import { fetchSheetData, updateSheetData, initClient, signIn, signOut } from '../googleSheetAPI.js';
+import { Container, TextField, Button, List, ListItem, Typography } from '@mui/material';
+import { fetchSheetData, updateSheetData, initClient, signIn, signOut } from '../googleSheetAPI';
 
 const AttendancePage = () => {
   const [attendance, setAttendance] = useState([]);
@@ -9,7 +10,7 @@ const AttendancePage = () => {
   const [date, setDate] = useState('');
 
   useEffect(() => {
-    gapi.load('client:auth2', initClient); // Initialize Google API client
+    gapi.load('client:auth2', initClient);
   }, []);
 
   useEffect(() => {
@@ -17,48 +18,55 @@ const AttendancePage = () => {
       const data = await fetchSheetData();
       setAttendance(data);
     };
-
     fetchData();
   }, []);
 
   const recordAttendance = async () => {
     const newRecord = { date, volunteerName, status };
-    await updateSheetData(newRecord); // Update sheet data
-    setAttendance([...attendance, newRecord]); // Update local state
+    await updateSheetData(newRecord);
+    setAttendance([...attendance, newRecord]);
     setVolunteerName('');
     setStatus('');
     setDate('');
   };
 
   return (
-    <div>
-      <h1>Attendance Page</h1>
-      <button onClick={signIn}>Sign In</button>
-      <button onClick={signOut}>Sign Out</button>
-      <input 
-        type="date" 
-        value={date} 
-        onChange={(e) => setDate(e.target.value)} 
+    <Container>
+      <Typography variant="h4" gutterBottom>Attendance Page</Typography>
+      <Button variant="outlined" color="primary" onClick={signIn} sx={{ mr: 2 }}>Sign In</Button>
+      <Button variant="outlined" color="secondary" onClick={signOut}>Sign Out</Button>
+      <TextField
+        label="Date"
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        fullWidth
+        margin="normal"
+        InputLabelProps={{ shrink: true }}
       />
-      <input 
-        type="text" 
-        placeholder="Volunteer Name" 
-        value={volunteerName} 
-        onChange={(e) => setVolunteerName(e.target.value)} 
+      <TextField
+        label="Volunteer Name"
+        value={volunteerName}
+        onChange={(e) => setVolunteerName(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input 
-        type="text" 
-        placeholder="Status (Present/Absent/OD)" 
-        value={status} 
-        onChange={(e) => setStatus(e.target.value)} 
+      <TextField
+        label="Status"
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <button onClick={recordAttendance}>Record Attendance</button>
-      <ul>
+      <Button variant="contained" color="primary" onClick={recordAttendance} sx={{ mt: 2 }}>
+        Record Attendance
+      </Button>
+      <List sx={{ mt: 3 }}>
         {attendance.map((record, index) => (
-          <li key={index}>{`${record.date} - ${record.volunteerName}: ${record.status}`}</li>
+          <ListItem key={index}>{`${record.date} - ${record.volunteerName}: ${record.status}`}</ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 };
 

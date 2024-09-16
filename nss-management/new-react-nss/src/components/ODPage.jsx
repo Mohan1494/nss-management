@@ -1,5 +1,6 @@
 // src/components/ODPage.jsx
 import React, { useState } from 'react';
+import { Container, TextField, Button, List, ListItem, Typography } from '@mui/material';
 
 const ODPage = () => {
   const [odRequests, setOdRequests] = useState([]);
@@ -8,50 +9,48 @@ const ODPage = () => {
   const [date, setDate] = useState('');
 
   const submitOdRequest = () => {
-    if (!volunteerName || !reason || !date) {
-      alert("Please fill all fields!");
-      return;
-    }
-
     const newRequest = { volunteerName, reason, date };
-
     setOdRequests([...odRequests, newRequest]);
     setVolunteerName('');
     setReason('');
     setDate('');
-
-    // Logic to update Google Sheet or Backend with OD requests would go here
   };
 
   return (
-    <div>
-      <h1>OD Page</h1>
-      <input 
-        type="text" 
-        placeholder="Volunteer Name" 
-        value={volunteerName} 
-        onChange={(e) => setVolunteerName(e.target.value)} 
+    <Container>
+      <Typography variant="h4" gutterBottom>OD Page</Typography>
+      <TextField
+        label="Volunteer Name"
+        value={volunteerName}
+        onChange={(e) => setVolunteerName(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input 
-        type="date" 
-        value={date} 
-        onChange={(e) => setDate(e.target.value)} 
+      <TextField
+        label="Date"
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        fullWidth
+        margin="normal"
+        InputLabelProps={{ shrink: true }}
       />
-      <input 
-        type="text" 
-        placeholder="Reason" 
-        value={reason} 
-        onChange={(e) => setReason(e.target.value)} 
+      <TextField
+        label="Reason"
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <button onClick={submitOdRequest}>Submit OD Request</button>
-      
-      <h2>OD Requests</h2>
-      <ul>
+      <Button variant="contained" color="primary" onClick={submitOdRequest} sx={{ mt: 2 }}>
+        Submit OD Request
+      </Button>
+      <List sx={{ mt: 3 }}>
         {odRequests.map((request, index) => (
-          <li key={index}>{`${request.date} - ${request.volunteerName}: ${request.reason}`}</li>
+          <ListItem key={index}>{`${request.date} - ${request.volunteerName}: ${request.reason}`}</ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 };
 

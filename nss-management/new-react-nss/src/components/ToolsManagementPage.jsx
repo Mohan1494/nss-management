@@ -1,5 +1,6 @@
 // src/components/ToolsManagementPage.jsx
 import React, { useState } from 'react';
+import { Container, TextField, Button, List, ListItem, Typography, Select, MenuItem } from '@mui/material';
 
 const ToolsManagementPage = () => {
   const [tools, setTools] = useState([]);
@@ -14,31 +15,41 @@ const ToolsManagementPage = () => {
   };
 
   return (
-    <div>
-      <h1>Tools Management System</h1>
-      <input 
-        type="text" 
-        placeholder="Tool Name" 
-        value={toolName} 
-        onChange={(e) => setToolName(e.target.value)} 
+    <Container>
+      <Typography variant="h4" gutterBottom>Tools Management Page</Typography>
+      <TextField
+        label="Tool Name"
+        value={toolName}
+        onChange={(e) => setToolName(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input 
-        type="number" 
-        placeholder="Quantity" 
-        value={quantity} 
-        onChange={(e) => setQuantity(e.target.value)} 
+      <TextField
+        label="Quantity"
+        type="number"
+        value={quantity}
+        onChange={(e) => setQuantity(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <select value={type} onChange={(e) => setType(e.target.value)}>
-        <option value="Inflow">Inflow</option>
-        <option value="Outflow">Outflow</option>
-      </select>
-      <button onClick={manageTool}>Record Tool</button>
-      <ul>
+      <Select
+        value={type}
+        onChange={(e) => setType(e.target.value)}
+        fullWidth
+        margin="normal"
+      >
+        <MenuItem value="Inflow">Inflow</MenuItem>
+        <MenuItem value="Outflow">Outflow</MenuItem>
+      </Select>
+      <Button variant="contained" color="primary" onClick={manageTool} sx={{ mt: 2 }}>
+        Manage Tool
+      </Button>
+      <List sx={{ mt: 3 }}>
         {tools.map((tool, index) => (
-          <li key={index}>{`${tool.toolName}: ${tool.quantity} (${tool.type})`}</li>
+          <ListItem key={index}>{`${tool.toolName} - ${tool.quantity} (${tool.type})`}</ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 };
 

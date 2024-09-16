@@ -1,5 +1,6 @@
 // src/components/AccountsPage.jsx
 import React, { useState } from 'react';
+import { Container, TextField, Button, List, ListItem, Typography } from '@mui/material';
 
 const AccountsPage = () => {
   const [expenses, setExpenses] = useState([]);
@@ -7,33 +8,42 @@ const AccountsPage = () => {
   const [amount, setAmount] = useState('');
 
   const addExpense = () => {
-    setExpenses([...expenses, { eventName, amount }]);
-    setEventName('');
-    setAmount('');
+    if (eventName && amount) {
+      setExpenses([...expenses, { eventName, amount }]);
+      setEventName('');
+      setAmount('');
+    }
   };
 
   return (
-    <div>
-      <h1>Accounts Page</h1>
-      <input 
-        type="text" 
-        placeholder="Event Name" 
-        value={eventName} 
-        onChange={(e) => setEventName(e.target.value)} 
+    <Container>
+      <Typography variant="h4" gutterBottom>Accounts Page</Typography>
+      <TextField
+        label="Event Name"
+        value={eventName}
+        onChange={(e) => setEventName(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input 
-        type="number" 
-        placeholder="Amount" 
-        value={amount} 
-        onChange={(e) => setAmount(e.target.value)} 
+      <TextField
+        label="Amount"
+        type="number"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <button onClick={addExpense}>Add Expense</button>
-      <ul>
+      <Button variant="contained" color="primary" onClick={addExpense} sx={{ mt: 2 }}>
+        Add Expense
+      </Button>
+      <List sx={{ mt: 3 }}>
         {expenses.map((expense, index) => (
-          <li key={index}>{`${expense.eventName}: $${expense.amount}`}</li>
+          <ListItem key={index}>
+            {`${expense.eventName}: $${expense.amount}`}
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 };
 
