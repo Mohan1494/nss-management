@@ -3,9 +3,12 @@ import { gapi } from 'gapi-script';
 // Google Sheets API configuration
 const CLIENT_ID = '877781895823-1mhaarhfgm8aalq52qgdvn2edbg40rlo.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyCvgGt7ayK0cPjgjT8me1JW5j3pu0_y1xA';
-const SHEET_ID = '1A7Bs3Zpmpm4I94YMi7DFxYE1wd1oX7T1pc5F9Gm4A7A';
+const SHEET_ID = '1A7Bs3Zpmpm4I94YMi7DFxYE1wd1oX7T1pc5F9Gm4A7A'; // The NSS Attendance Sheet ID
 const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+
+
+
 
 // Initialize Google API client
 export const initClient = () => {
@@ -25,29 +28,31 @@ export const initClient = () => {
 
 // Sign in to Google
 export const signIn = () => {
-  gapi.auth2.getAuthInstance().signIn();
+  return gapi.auth2.getAuthInstance().signIn();
 };
 
 // Sign out from Google
 export const signOut = () => {
-  gapi.auth2.getAuthInstance().signOut();
+  return gapi.auth2.getAuthInstance().signOut();
 };
 
-export const fetchSheetData = async () => {
+// Fetch data from a specific year sheet
+export const fetchSheetData = async (year) => {
   try {
+    const sheetName = `Year ${year}`; // Dynamic sheet name based on year
     const response = await gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Sheet1',
+      range: `${sheetName}!A1:Z1000`, // Fetch from the respective sheet
     });
     
     const rows = response.result.values || [];
     if (rows.length < 2) return { volunteers: [] };
 
-    const headers = rows[0];
+    const headers = rows[0]; // Assuming first row contains headers (SNO, Name, Date)
     const volunteers = rows.slice(1).map(row => {
       const data = { id: row[0], name: row[1] };
       headers.slice(2).forEach((header, index) => {
-        data[header] = row[index + 2] || ''; // Add date-specific status
+        data[header] = row[index + 2] || ''; // Add date-specific attendance status
       });
       return data;
     });
@@ -59,10 +64,13 @@ export const fetchSheetData = async () => {
   }
 };
 
-// Update data in Google Sheets
-export const updateSheetData = async (records) => {
+// Update data in a specific year sheet
+export const updateSheetData = async (year, records) => {
   try {
-    const range = 'Sheet1'; // Adjust the range if necessary
+    const sheetName = `Year ${year}`; // Dynamic sheet name based on year
+    const range = `${sheetName}!A1:Z1000`; // Adjust the range if necessary
+
+    // Fetch the existing sheet data
     const sheetData = await gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
       range,
@@ -72,7 +80,7 @@ export const updateSheetData = async (records) => {
     const headers = existingData[0] || [];
     const dateIndex = headers.indexOf(records[0].date);
 
-    // Check if the date column already exists
+    // Check if the date column already exists, if not, add the date
     if (dateIndex === -1) {
       headers.push(records[0].date);
       existingData[0] = headers;
@@ -88,7 +96,7 @@ export const updateSheetData = async (records) => {
     // Update or add records
     records.forEach(record => {
       if (!dataMap[record.volunteerId]) {
-        // Add new row if not exists
+        // Add new row if volunteer does not exist
         const newRow = [record.volunteerId, record.volunteerName];
         headers.forEach((header, index) => {
           if (header === record.date) {
@@ -104,21 +112,22 @@ export const updateSheetData = async (records) => {
         const dateColumnIndex = headers.indexOf(record.date);
         if (dateColumnIndex !== -1) {
           row[dateColumnIndex] = record.status;
+        } else {
+          row.push(record.status);
         }
       }
     });
 
-    // Write the updated data back to the sheet
+    // Update the sheet with new data
     await gapi.client.sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
       range,
-      valueInputOption: 'USER_ENTERED',
+      valueInputOption: 'RAW',
       resource: {
         values: existingData,
       },
     });
-    console.log('Data updated:', existingData);
   } catch (error) {
-    console.error('Error updating data in Google Sheets:', error);
+    console.error('Error updating Google Sheets:', error);
   }
 };
