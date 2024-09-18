@@ -1,14 +1,11 @@
 import { gapi } from 'gapi-script';
 
 // Google Sheets API configuration
-const CLIENT_ID = '877781895823-1mhaarhfgm8aalq52qgdvn2edbg40rlo.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyCvgGt7ayK0cPjgjT8me1JW5j3pu0_y1xA';
-const SHEET_ID = '1A7Bs3Zpmpm4I94YMi7DFxYE1wd1oX7T1pc5F9Gm4A7A'; // The NSS Attendance Sheet ID
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_SHEETS_CLIENT_ID;
+const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
+const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEETS_SHEET_ID;
 const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-
-
-
 
 // Initialize Google API client
 export const initClient = () => {

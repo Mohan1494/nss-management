@@ -1,5 +1,6 @@
-const CLIENT_ID = '877781895823-q43jb3ch4h9klm4s8ma7s9s345j2jvee.apps.googleusercontent.com'; // Replace with your actual client ID
-const REDIRECT_URI = 'http://localhost:5173/docs'; // Replace with your actual redirect URI
+// Make sure you have these environment variables defined in your .env file
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID;
+const REDIRECT_URI = import.meta.env.VITE_GOOGLE_DRIVE_REDIRECT_URI;
 
 // Generates the URL for OAuth authorization
 export const getAuthUrl = () => {
